@@ -1,23 +1,19 @@
 /* eslint-disable no-unused-vars */
-// App.jsx
+// App.js
 import React from "react";
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
+import Navbar from "./component/Navbar";
 import InOutForm from "./component/InOutForm";
 import DataList from "./component/DataList";
-import DisplayData from "./component/DisplayData";
+import "./App.css";
 
-const App = () => {
+function App() {
   return (
-    <Router>
-      <div className="container mt-4">
-        <Switch>
-          <Route path="/" exact component={InOutForm} />
-          <Route path="/data" exact component={DataList} />
-          <Route path="/data/:folderName" component={DisplayData} />
-        </Switch>
-      </div>
-    </Router>
+    <div>
+      <Navbar />
+      <InOutForm />
+      <DataList />
+    </div>
   );
-};
+}
 
 export default App;

@@ -1,4 +1,3 @@
-// InOutForm.jsx
 import { useState } from "react";
 import axios from "axios";
 
@@ -32,28 +31,27 @@ const InOutForm = () => {
     e.preventDefault();
 
     // Check if all required fields are filled
-    if (
-      !formData.title ||
-      !formData.number_code ||
-      !formData.sender ||
-      !formData.receiver ||
-      !formData.date ||
-      !formData.description ||
-      !formData.attachment
-    ) {
-      alert("Please fill in all fields");
-      return;
+    const requiredFields = [
+      "title",
+      "number_code",
+      "sender",
+      "receiver",
+      "date",
+      "description",
+      "attachment",
+    ];
+    for (const field of requiredFields) {
+      if (!formData[field]) {
+        alert(`Please fill in the ${field} field`);
+        return;
+      }
     }
 
     // Create a FormData object to upload the file
     const formDataToSend = new FormData();
-    formDataToSend.append("title", formData.title);
-    formDataToSend.append("number_code", formData.number_code);
-    formDataToSend.append("sender", formData.sender);
-    formDataToSend.append("receiver", formData.receiver);
-    formDataToSend.append("date", formData.date);
-    formDataToSend.append("description", formData.description);
-    formDataToSend.append("attachment", formData.attachment);
+    for (const field of Object.keys(formData)) {
+      formDataToSend.append(field, formData[field]);
+    }
 
     try {
       // Use Axios to send the formDataToSend to your server
@@ -82,9 +80,6 @@ const InOutForm = () => {
       <h1>Data Input Form</h1>
       <form onSubmit={handleSubmit}>
         <div className="mb-3">
-          <label htmlFor="title" className="form-label">
-            Title
-          </label>
           <input
             type="text"
             className="form-control"
@@ -92,13 +87,11 @@ const InOutForm = () => {
             name="title"
             value={formData.title}
             onChange={handleChange}
+            placeholder="Title"
             required
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="number_code" className="form-label">
-            Number Code
-          </label>
           <input
             type="text"
             className="form-control"
@@ -106,13 +99,11 @@ const InOutForm = () => {
             name="number_code"
             value={formData.number_code}
             onChange={handleChange}
+            placeholder="Number Code"
             required
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="sender" className="form-label">
-            Sender
-          </label>
           <input
             type="text"
             className="form-control"
@@ -120,13 +111,11 @@ const InOutForm = () => {
             name="sender"
             value={formData.sender}
             onChange={handleChange}
+            placeholder="Sender"
             required
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="receiver" className="form-label">
-            Receiver
-          </label>
           <input
             type="text"
             className="form-control"
@@ -134,13 +123,11 @@ const InOutForm = () => {
             name="receiver"
             value={formData.receiver}
             onChange={handleChange}
+            placeholder="Receiver"
             required
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="date" className="form-label">
-            Date
-          </label>
           <input
             type="date"
             className="form-control"
@@ -148,13 +135,11 @@ const InOutForm = () => {
             name="date"
             value={formData.date}
             onChange={handleChange}
+            placeholder="Date"
             required
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="description" className="form-label">
-            Description
-          </label>
           <input
             type="text"
             className="form-control"
@@ -162,13 +147,11 @@ const InOutForm = () => {
             name="description"
             value={formData.description}
             onChange={handleChange}
+            placeholder="Description"
             required
           />
         </div>
         <div className="mb-3">
-          <label htmlFor="attachment" className="form-label">
-            Attachment (png, jpg, pdf)
-          </label>
           <input
             type="file"
             className="form-control"
