@@ -1,21 +1,20 @@
-/* eslint-disable no-unused-vars */
 import express from 'express';
-import { createRequire } from 'module';
 import multer from 'multer';
 import { fileURLToPath } from 'url';
 import path from 'path';
 import cors from 'cors';
 import fs from 'fs';
 
-const require = createRequire(import.meta.url);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
 const port = 3001;
 
 app.use(cors());
-app.use(express.json()); // Parse JSON requests
+app.use(express.json());
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+app.use('/uploads', express.static(path.join(__dirname, 'DataUploadsFolder')));
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -64,27 +63,30 @@ app.post('/upload', upload.single('attachment'), (req, res) => {
   }
 });
 
-
-
-// Serve files from the DataUploadsFolder
-app.use('/api/files', express.static(path.join(__dirname, 'DataUploadsFolder')));
-
-// Define an endpoint to fetch the list of files
-
-app.get('/api/fileList', (req, res) => {
+app.get('/api/folderList', (req, res) => {
   try {
-    const fileList = fetchFileList(path.join(__dirname, 'DataUploadsFolder'));
-    res.json(fileList);
+    const folderList = fetchFolderList(path.join(__dirname, 'DataUploadsFolder'));
+    res.json(folderList);
   } catch (error) {
-    console.error('Error fetching file list:', error);
+    console.error('Error fetching folder list:', error);
     res.status(500).json({ error: 'Internal Server Error', message: error.message });
   }
 });
 
 app.get('/api/data/:folderName', (req, res) => {
   const folderName = req.params.folderName;
-  const jsonFilePath = path.join(__dirname, 'DataUploadsFolder', folderName, `${folderName}.json`);
-  
+  const decodedFolderName = decodeURIComponent(folderName); // Decode the folder name
+
+  const jsonFilePath = path.join(__dirname, 'DataUploadsFolder', decodedFolderName, `${decodedFolderName}.json`);
+
+  console.log('Received folder name:', decodedFolderName);
+  console.log('JSON File Path:', jsonFilePath);
+
+  if (!fs.existsSync(jsonFilePath)) {
+    res.status(404).json({ error: 'File Not Found', message: 'JSON file does not exist.' });
+    return;
+  }
+
   try {
     const jsonData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'));
     res.json(jsonData);
@@ -94,12 +96,11 @@ app.get('/api/data/:folderName', (req, res) => {
   }
 });
 
-// Function to fetch the list of files in a directory
-function fetchFileList(directoryPath) {
-  const files = fs.readdirSync(directoryPath);
-  return files;
-}
-
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+function fetchFolderList(directoryPath) {
+  const folders = fs.readdirSync(directoryPath);
+  return folders;
+}
