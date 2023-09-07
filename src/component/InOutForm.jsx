@@ -8,6 +8,7 @@ const InOutForm = () => {
     sender: "",
     receiver: "",
     date: "",
+    description: "",
     attachment: null,
   });
 
@@ -35,6 +36,7 @@ const InOutForm = () => {
       !formData.sender ||
       !formData.receiver ||
       !formData.date ||
+      !formData.description ||
       !formData.attachment
     ) {
       alert("Please fill in all fields");
@@ -47,6 +49,7 @@ const InOutForm = () => {
     formDataToSend.append("sender", formData.sender);
     formDataToSend.append("receiver", formData.receiver);
     formDataToSend.append("date", formData.date);
+    formDataToSend.append("description", formData.description);
     formDataToSend.append("attachment", formData.attachment);
 
     try {
@@ -59,6 +62,7 @@ const InOutForm = () => {
         sender: "",
         receiver: "",
         date: "",
+        description: "",
         attachment: null,
       });
 
@@ -125,6 +129,20 @@ const InOutForm = () => {
             id="date"
             name="date"
             value={formData.date}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="description" className="form-label">
+            Description
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="description"
+            name="description"
+            value={formData.description}
             onChange={handleChange}
             required
           />
