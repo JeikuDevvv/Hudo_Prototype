@@ -1,4 +1,3 @@
-// InOutForm.jsx
 import { useState } from "react";
 import axios from "axios";
 
@@ -77,6 +76,7 @@ const InOutForm = () => {
     <div>
       <h1>Data Input Form</h1>
       <form onSubmit={handleSubmit}>
+        {/* Add your form fields here */}
         <div className="mb-3">
           <label htmlFor="title" className="form-label">
             Title
@@ -147,7 +147,6 @@ const InOutForm = () => {
             required
           />
         </div>
-        {/* Add similar fields for sender, receiver, date, and file input */}
         <div className="mb-3">
           <label htmlFor="attachment" className="form-label">
             Attachment (png, jpg, pdf)
