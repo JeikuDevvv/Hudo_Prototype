@@ -31,11 +31,12 @@ const upload = multer({ storage });
 
 app.post('/upload', upload.single('attachment'), (req, res) => {
   try {
-    const { title, sender, receiver, date, description } = req.body;
+    const { title, number_code, sender, receiver, date, description } = req.body;
     const filePath = req.file.path;
 
     const data = {
       title,
+      number_code,
       sender,
       receiver,
       date,
@@ -49,6 +50,7 @@ app.post('/upload', upload.single('attachment'), (req, res) => {
 
     console.log('Uploaded Data:');
     console.log('Title:', title);
+    console.log('Number Code:', number_code);
     console.log('Sender:', sender);
     console.log('Receiver:', receiver);
     console.log('Date:', date);

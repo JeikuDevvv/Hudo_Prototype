@@ -8,18 +8,17 @@ const DataList = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch the list of folders from your server
     axios
       .get("http://localhost:3001/api/folderList")
       .then((response) => {
         const folders = response.data;
         setDataList(folders);
-        setLoading(false); // Set loading to false when data is loaded
+        setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching folder list:", error);
-        setError(error); // Set the error state if an error occurs
-        setLoading(false); // Set loading to false when an error occurs
+        setError(error);
+        setLoading(false);
       });
   }, []);
 
@@ -38,6 +37,7 @@ const DataList = () => {
         <thead>
           <tr>
             <th>Title</th>
+            <th>Number Code</th>
             <th>Sender</th>
             <th>Receiver</th>
             <th>Date</th>
@@ -61,43 +61,38 @@ const DataItem = ({ folderName }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Encode the folderName before sending it in the URL
     const encodedFolderName = encodeURIComponent(folderName);
 
-    // Fetch JSON data by folder name from your server
     axios
       .get(`http://localhost:3001/api/data/${encodedFolderName}`)
       .then((response) => {
         const jsonData = response.data;
         setData(jsonData);
-        setLoading(false); // Set loading to false when data is loaded
+        setLoading(false);
       })
       .catch((error) => {
         console.error("Error fetching JSON data:", error);
-        setError(error); // Set the error state if an error occurs
-        setLoading(false); // Set loading to false when an error occurs
+        setError(error);
+        setLoading(false);
       });
   }, [folderName]);
 
   const handleViewClick = () => {
-    // Handle the View button click here (e.g., show a modal with data)
     console.log("View button clicked for folder:", folderName);
   };
 
   const handleDownloadClick = () => {
-    // Handle the Download button click here (e.g., initiate download)
     console.log("Download button clicked for folder:", folderName);
   };
 
   const handleDeleteClick = () => {
-    // Handle the Delete button click here (e.g., show a confirmation dialog and delete data)
     console.log("Delete button clicked for folder:", folderName);
   };
 
   if (loading) {
     return (
       <tr>
-        <td colSpan="6">Loading...</td>
+        <td colSpan="7">Loading...</td>
       </tr>
     );
   }
@@ -105,18 +100,19 @@ const DataItem = ({ folderName }) => {
   if (error) {
     return (
       <tr>
-        <td colSpan="6">Error: {error.message}</td>
+        <td colSpan="7">Error: {error.message}</td>
       </tr>
     );
   }
 
   if (!data) {
-    return null; // Render nothing if data is not available yet
+    return null;
   }
 
   return (
     <tr>
       <td>{data.title}</td>
+      <td>{data.number_code}</td>
       <td>{data.sender}</td>
       <td>{data.receiver}</td>
       <td>{data.date}</td>

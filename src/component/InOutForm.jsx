@@ -1,9 +1,11 @@
+// InOutForm.jsx
 import { useState } from "react";
 import axios from "axios";
 
 const InOutForm = () => {
   const [formData, setFormData] = useState({
     title: "",
+    number_code: "",
     sender: "",
     receiver: "",
     date: "",
@@ -32,6 +34,7 @@ const InOutForm = () => {
     // Check if all required fields are filled
     if (
       !formData.title ||
+      !formData.number_code ||
       !formData.sender ||
       !formData.receiver ||
       !formData.date ||
@@ -45,6 +48,7 @@ const InOutForm = () => {
     // Create a FormData object to upload the file
     const formDataToSend = new FormData();
     formDataToSend.append("title", formData.title);
+    formDataToSend.append("number_code", formData.number_code);
     formDataToSend.append("sender", formData.sender);
     formDataToSend.append("receiver", formData.receiver);
     formDataToSend.append("date", formData.date);
@@ -58,6 +62,7 @@ const InOutForm = () => {
       // Clear the form fields after successful submission
       setFormData({
         title: "",
+        number_code: "",
         sender: "",
         receiver: "",
         date: "",
@@ -76,7 +81,6 @@ const InOutForm = () => {
     <div>
       <h1>Data Input Form</h1>
       <form onSubmit={handleSubmit}>
-        {/* Add your form fields here */}
         <div className="mb-3">
           <label htmlFor="title" className="form-label">
             Title
@@ -87,6 +91,20 @@ const InOutForm = () => {
             id="title"
             name="title"
             value={formData.title}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label htmlFor="number_code" className="form-label">
+            Number Code
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            id="number_code"
+            name="number_code"
+            value={formData.number_code}
             onChange={handleChange}
             required
           />
