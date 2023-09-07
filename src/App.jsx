@@ -1,14 +1,14 @@
 import "./App.css";
 import InOutForm from "./component/InOutForm";
 import Navbar from "./component/Navbar";
-import FileTable from "./component/FileTable";
+import DataDisplayTable from "./component/DataDisplayTable";
 
 function App() {
   return (
     <>
       <Navbar />
       <InOutForm />
-      <FileTable />
+      <DataDisplayTable />
     </>
   );
 }

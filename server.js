@@ -64,37 +64,32 @@ app.post('/upload', upload.single('attachment'), (req, res) => {
   }
 });
 
-app.delete('/api/files/:title', (req, res) => {
-  const title = req.params.title;
-  const filePath = path.join(__dirname, 'DataUploadsFolder', title);
-  
-  try {
-    fs.unlinkSync(filePath); // Delete the file
-    res.sendStatus(200);
-  } catch (error) {
-    console.error('Error deleting file:', error);
-    res.status(500).json({ error: 'Internal Server Error', message: error.message });
-  }
-});
 
-// Define a route to download files by title
-app.get('/api/download/:title', (req, res) => {
-  const title = req.params.title;
-  const filePath = path.join(__dirname, 'DataUploadsFolder', title);
-
-  res.download(filePath, title); // Send the file as a download
-});
 
 // Serve files from the DataUploadsFolder
 app.use('/api/files', express.static(path.join(__dirname, 'DataUploadsFolder')));
 
 // Define an endpoint to fetch the list of files
+
 app.get('/api/fileList', (req, res) => {
   try {
     const fileList = fetchFileList(path.join(__dirname, 'DataUploadsFolder'));
     res.json(fileList);
   } catch (error) {
     console.error('Error fetching file list:', error);
+    res.status(500).json({ error: 'Internal Server Error', message: error.message });
+  }
+});
+
+app.get('/api/data/:folderName', (req, res) => {
+  const folderName = req.params.folderName;
+  const jsonFilePath = path.join(__dirname, 'DataUploadsFolder', folderName, `${folderName}.json`);
+  
+  try {
+    const jsonData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'));
+    res.json(jsonData);
+  } catch (error) {
+    console.error('Error reading JSON file:', error);
     res.status(500).json({ error: 'Internal Server Error', message: error.message });
   }
 });
