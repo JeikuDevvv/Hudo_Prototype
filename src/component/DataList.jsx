@@ -1,10 +1,15 @@
-import { useState, useEffect } from "react";
+/* eslint-disable no-unused-vars */
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+
+import ViewModal from "./ViewModal";
 
 const DataList = () => {
   const [dataList, setDataList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const [selectedFolder, setSelectedFolder] = useState(null);
 
   useEffect(() => {
     // Fetch the list of folders from your server
@@ -23,18 +28,39 @@ const DataList = () => {
   }, []);
 
   const handleViewClick = (folderName) => {
-    // Handle the View button click here (e.g., show a modal with data)
-    console.log("View button clicked for folder:", folderName);
+    setSelectedFolder(folderName);
+  };
+
+  const closeViewModal = () => {
+    setSelectedFolder(null);
   };
 
   const handleDownloadClick = (folderName) => {
-    // Handle the Download button click here (e.g., initiate download)
-    console.log("Download button clicked for folder:", folderName);
+    const downloadLink = document.createElement("a");
+    downloadLink.href = `http://localhost:3001/uploads/${encodeURIComponent(
+      folderName
+    )}/attachment`;
+    downloadLink.download = "attachment"; // You can set the desired filename here
+    downloadLink.click();
   };
 
   const handleDeleteClick = (folderName) => {
-    // Handle the Delete button click here (e.g., show a confirmation dialog and delete data)
-    console.log("Delete button clicked for folder:", folderName);
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this data?"
+    );
+    if (confirmDelete) {
+      axios
+        .delete(
+          `http://localhost:3001/api/data/${encodeURIComponent(folderName)}`
+        )
+        .then(() => {
+          console.log("Data deleted successfully");
+        })
+        .catch((error) => {
+          console.error("Error deleting data:", error);
+          alert("An error occurred while deleting the data");
+        });
+    }
   };
 
   if (loading) {
@@ -91,6 +117,10 @@ const DataList = () => {
           ))}
         </tbody>
       </table>
+
+      {selectedFolder && (
+        <ViewModal folderName={selectedFolder} onClose={closeViewModal} />
+      )}
     </div>
   );
 };

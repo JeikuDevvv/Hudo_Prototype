@@ -60,7 +60,6 @@ app.post('/upload', upload.single('attachment'), (req, res) => {
     res.sendStatus(200);
   } catch (error) {
     console.error('Error handling the request:', error);
-
     res.status(500).json({ error: 'Internal Server Error', message: error.message });
   }
 });
@@ -76,24 +75,44 @@ app.get('/api/folderList', (req, res) => {
 });
 
 app.get('/api/data/:folderName', (req, res) => {
-  const folderName = req.params.folderName;
-  const decodedFolderName = decodeURIComponent(folderName); // Decode the folder name
-
-  const jsonFilePath = path.join(__dirname, 'DataUploadsFolder', decodedFolderName, `${decodedFolderName}.json`);
-
-  console.log('Received folder name:', decodedFolderName);
-  console.log('JSON File Path:', jsonFilePath);
-
-  if (!fs.existsSync(jsonFilePath)) {
-    res.status(404).json({ error: 'File Not Found', message: 'JSON file does not exist.' });
-    return;
-  }
-
   try {
+    const folderName = req.params.folderName;
+    const decodedFolderName = decodeURIComponent(folderName); // Decode the folder name
+
+    const jsonFilePath = path.join(__dirname, 'DataUploadsFolder', decodedFolderName, `${decodedFolderName}.json`);
+
+    console.log('Received folder name:', decodedFolderName);
+    console.log('JSON File Path:', jsonFilePath);
+
+    if (!fs.existsSync(jsonFilePath)) {
+      res.status(404).json({ error: 'File Not Found', message: 'JSON file does not exist.' });
+      return;
+    }
+
     const jsonData = JSON.parse(fs.readFileSync(jsonFilePath, 'utf8'));
     res.json(jsonData);
   } catch (error) {
-    console.error('Error reading JSON file:', error);
+    console.error('Error reading or processing the request:', error);
+    res.status(500).json({ error: 'Internal Server Error', message: error.message });
+  }
+});
+
+app.delete('/api/data/:folderName', (req, res) => {
+  try {
+    const folderName = req.params.folderName;
+    const decodedFolderName = decodeURIComponent(folderName);
+
+    const jsonFilePath = path.join(__dirname, 'DataUploadsFolder', decodedFolderName, `${decodedFolderName}.json`);
+
+    if (!fs.existsSync(jsonFilePath)) {
+      res.status(404).json({ error: 'File Not Found', message: 'JSON file does not exist.' });
+      return;
+    }
+
+    fs.unlinkSync(jsonFilePath);
+    res.sendStatus(204); // No content (success)
+  } catch (error) {
+    console.error('Error deleting JSON file:', error);
     res.status(500).json({ error: 'Internal Server Error', message: error.message });
   }
 });
